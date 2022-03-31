@@ -1,9 +1,9 @@
 {
-  "name": "ExamplePlugin",
+  "name": "Lambda IRC",
   "version": "1.0",
-  "description": "Example implementation of a plugin for Lambda.",
-  "url": "https://github.com/lambda-client/ExamplePlugin",
-  "authors": [ "me", "you" ],
+  "description": "A IRC Client as Lambda Plugin",
+  "url": "https://github.com/Bluefox187/LambdaIRC",
+  "authors": [ "Techfox" ],
   "main_class": "com.lambda.ExamplePlugin",
   "min_api_version": "3.0",
   "mixins": [ "mixins.ExamplePlugin.json" ],
