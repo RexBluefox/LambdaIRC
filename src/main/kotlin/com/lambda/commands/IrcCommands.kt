@@ -3,18 +3,20 @@ package com.lambda.commands
 import com.lambda.client.LambdaMod
 import com.lambda.client.command.ClientCommand
 import com.lambda.client.command.commands.SayCommand.string
+import com.lambda.client.util.combat.CombatUtils
 import com.lambda.client.util.text.MessageSendHelper
 import java.io.PrintWriter
 import java.net.Socket
 import java.util.*
+import com.lambda.modules.ExampleModule.setting
 
 object IrcCommands : ClientCommand(
     name = "irc",
     description = "IRC Commands"
 ) {
 
-
     init {
+        //val channel by setting("Channel", "#2b2t")
         val socket = Socket("irc.esper.net", 5555)
         LambdaMod.LOG.info("created socket")
         val out = PrintWriter(socket.getOutputStream(), true)
@@ -31,6 +33,7 @@ object IrcCommands : ClientCommand(
                 var t1 = readMessages(input, out)
                 t1.start()
                 LambdaMod.LOG.info("Started thread 1")
+                MessageSendHelper.sendChatMessage("§l§4Starting IRC Client")
             }
         }
 
@@ -50,6 +53,8 @@ object IrcCommands : ClientCommand(
                 execute("Join") {
                     write("JOIN", arg.value, out)
                     LambdaMod.LOG.info("Join: joined ${arg.value}")
+                    MessageSendHelper.sendChatMessage("§l§4Joined §c${arg.value}")
+
                 }
             }
         }
@@ -77,14 +82,17 @@ object IrcCommands : ClientCommand(
                     LambdaMod.LOG.info("LambdaIRC: $name sent $message")
                 }
                 else{
-                    MessageSendHelper.sendChatMessage("INFO: $serverMessage")
-                    LambdaMod.LOG.info("<<< $serverMessage")
+                    if (serverMessage.startsWith("PING")) {
+                        val pingContents = serverMessage.split(" ")[1]
+                        LambdaMod.LOG.info("Pingcontent: $pingContents")
+                        write("PONG", pingContents, out)
+                    }
+                    else {
+                        //MessageSendHelper.sendChatMessage("INFO: $serverMessage")
+                        LambdaMod.LOG.info("<<< $serverMessage")
+                    }
                 }
-                if (serverMessage.startsWith("PING")) {
-                    val pingContents = serverMessage.split(" ")[1]
-                    LambdaMod.LOG.info("Pingcontent: $pingContents")
-                    write("PONG", pingContents, out)
-                }
+
             }
         }
     }
